@@ -1,0 +1,71 @@
+.container {
+    display: flex;
+    flex-flow: row wrap;
+    text-align: left;
+}
+
+.container > * {
+    padding: 10px;
+    flex: 1 100%;
+}
+
+.header {
+    background: #4fc0ff;
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+#map {
+    height: 400px;
+    width: auto;
+    border-radius: 3px;
+}
+
+.filter-section {
+    max-width: 250px;
+    background: #82d7f0;
+    border: 1px solid #999;
+    border-radius: 3px;
+}
+
+#filter-text {
+    position: relative;
+    width: 70%;
+    padding: 2px;
+}
+
+#filter-btn {
+    width: 24%;
+}
+
+.footer {
+    background: lightgreen;
+    text-align: center;
+    border-radius: 3px;
+}
+
+
+#pano {
+    width: 200px;
+    height: 200px;
+}
+
+#hide-listings,
+#show-listings {
+    width: 48%;
+}
+
+
+@media all and (min-width: 600px) {
+    .aside { flex: 1 auto; }
+    .filter-section { width: auto; }
+}
+
+@media all and (min-width: 800px) {
+    .filter-section { order: 1; }
+    #map    { order: 2; }
+    #map    { flex: 3 0px; }
+    .footer  { order: 4; }
+}
