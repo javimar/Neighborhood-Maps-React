@@ -43,27 +43,23 @@
     outline: 0;
 }
 
+.places-list-items {
+    list-style: none;
+    line-height: 1.6em;
+    cursor: pointer;
+}
+
 #pano {
     width: 200px;
     height: 200px;
 }
 
-#hide-listings,
-#show-listings {
-    width: 48%;
-}
-
-.places-list-items {
-    list-style: none;
-    text-align: left;
-    line-height: 1.6em;
-    cursor: pointer;
-}
-
 .footer {
     background: lightgreen;
-    text-align: center;
+    text-align: right;
     border-radius: 3px;
+    font-weight: bold;
+    font-size: .8em;
 }
 
 @media all and (min-width: 600px) {

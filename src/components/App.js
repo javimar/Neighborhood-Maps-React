@@ -6,7 +6,7 @@ import scriptLoader from 'react-async-script-loader'
 import { MAP_API_KEY } from '../data/auth';
 import { places } from '../data/places';
 
-let createMap = {}
+let createdMap = {}
 let markers = [];
 
 class App extends Component
@@ -19,7 +19,7 @@ class App extends Component
     // Load the Google MAP
     componentWillReceiveProps()
     {
-        createMap = new window.google.maps.Map(document.getElementById('map'),
+        createdMap = new window.google.maps.Map(document.getElementById('map'),
         {
             center: { lat: 40.455606, lng: -3.588177 },
             zoom: 15
@@ -49,6 +49,7 @@ class App extends Component
             });
             // Push the marker to our array of markers.
             markers.push(marker);
+            
             // Create an onclick event to open an infowindow at each marker.
             marker.addListener('click', function()
             {
@@ -65,13 +66,11 @@ class App extends Component
             {
                 this.setIcon(defaultIcon);
             });
+
+            showPlaces();
         }
 
-        document.getElementById('show-listings').addEventListener('click', showListings);
-        document.getElementById('hide-listings').addEventListener('click', hideListings);
-
-
-        this.setState({ googleMap: createMap })
+        this.setState({ googleMap: createdMap })
     }
 
     render()
@@ -81,22 +80,20 @@ class App extends Component
                 <header className="header">Alameda de Osuna Neighborhood</header>
 
                 <aside className="aside filter-section">
-
-                    <input id="show-listings" type="button" value="Show Listings" />
-                    <input id="hide-listings" type="button" value="Hide Listings" />
-
-                    <ListPlaces places={places}/>
-
+                    <ListPlaces
+                        places={ places }
+                        markers={ markers }
+                    />
                 </aside>
 
                 <Map />
 
-                <footer className="footer">Footer</footer>
+                <footer className="footer">JaviMar 2018</footer>
 
             </div>
-            );
+            )
     }
-}
+} // End CLASS
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
@@ -148,25 +145,25 @@ function populateInfoWindow(marker, infowindow)
           // 50 meters of the markers position
           streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
           // Open the infowindow on the correct marker.
-          infowindow.open(createMap, marker);
+          infowindow.open(createdMap, marker);
     }
 }
 
 // This function will loop through the markers array and display them all.
-function showListings()
+function showPlaces()
 {
     let bounds = new window.google.maps.LatLngBounds();
     // Extend the boundaries of the map for each marker and display the marker
     for(let i = 0; i < markers.length; i++)
     {
-        markers[i].setMap(createMap);
+        markers[i].setMap(createdMap);
         bounds.extend(markers[i].position);
     }
-    createMap.fitBounds(bounds);
+    createdMap.fitBounds(bounds);
 }
 
-// This function will loop through the listings and hide them all.
-function hideListings()
+// This function will loop through the places and hide them all.
+function hidePlaces()
 {
     for(let i = 0; i < markers.length; i++)
     {

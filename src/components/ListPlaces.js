@@ -11,21 +11,28 @@ class ListPlaces extends Component
 
     updateQuery = (query) =>
     {
-        this.setState({query: query.trim()})
+        this.setState({ query: query })
     }
-
 
     render()
     {
-        const { places } = this.props
+        const { places, markers } = this.props
         const { query } = this.state
 
         let showingPlaces
         if(query) // someone has typed in the input filter
         {
             // escape special chars if any, and 'i' means case independant
-            const match = new RegExp(escapeRegExp(query), 'i')
+            const match = new RegExp(escapeRegExp(query.trim()), 'i')
             showingPlaces = places.filter((place) => match.test(place.name))
+
+            /*
+            let marks = markers.filter((place) => match.test(place.name))
+            for (let x in marks)
+            {
+                marks[x].setMap(null);
+            }
+*/
         }
         else
         {
@@ -42,12 +49,21 @@ class ListPlaces extends Component
                     placeholder="Filter places"
                     value={ query }
                     onChange={ (event) => this.updateQuery(event.target.value) }
+                    role="search"
+                    aria-labelledby="Search places"
                 />
                 <ul>
                     {
                         showingPlaces.map(function(place, index)
                         {
-                            return <li className="places-list-items" key={ index }>{ place.name }</li>;
+
+                            //if(place.name !== markers.name)
+                            //    markers[markers.indexOf("name")].setMap(null)
+
+                            return <li
+                                className="places-list-items"
+                                key={ index }>{ place.name }
+                            </li>
                         }
                     )}
                 </ul>
