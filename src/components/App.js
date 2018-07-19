@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import '../App.css'
 import Map from './Map'
 import ListPlaces from './ListPlaces'
-import SearchBar from './SearchBar'
 import scriptLoader from 'react-async-script-loader'
 import { MAP_API_KEY } from '../data/auth';
 import { places } from '../data/places';
@@ -86,9 +85,7 @@ class App extends Component
                     <input id="show-listings" type="button" value="Show Listings" />
                     <input id="hide-listings" type="button" value="Hide Listings" />
 
-                    <SearchBar />
-
-                    <ListPlaces />
+                    <ListPlaces places={places}/>
 
                 </aside>
 

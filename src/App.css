@@ -25,27 +25,23 @@
 
 .filter-section {
     max-width: 250px;
-    background: #82d7f0;
+    background: #b3dde5;
     border: 1px solid #999;
     border-radius: 3px;
 }
 
-#filter-text {
-    position: relative;
-    width: 70%;
-    padding: 2px;
+.filter-text {
+    font-size: 1.1em;
+    text-align: left;
+    width: auto;
+    background: #ebf2fb;
+    padding: 5px 10px;
+    margin-bottom:5px;
+    margin-top: 10px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: 0;
 }
-
-#filter-btn {
-    width: 24%;
-}
-
-.footer {
-    background: lightgreen;
-    text-align: center;
-    border-radius: 3px;
-}
-
 
 #pano {
     width: 200px;
@@ -57,6 +53,18 @@
     width: 48%;
 }
 
+.places-list-items {
+    list-style: none;
+    text-align: left;
+    line-height: 1.6em;
+    cursor: pointer;
+}
+
+.footer {
+    background: lightgreen;
+    text-align: center;
+    border-radius: 3px;
+}
 
 @media all and (min-width: 600px) {
     .aside { flex: 1 auto; }
