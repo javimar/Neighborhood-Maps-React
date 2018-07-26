@@ -1,10 +1,10 @@
 import React from 'react'
 
-function Map(props) // Stateless Functional Component
+const Map = (props) => // Stateless Functional Component and ES6 function
 {
-    return (
-        <section id="map" role='application' tabIndex='-1'></section>
-    )
+	return (
+		<section id="map" role='application' tabIndex='-1'></section>
+	)
 }
 
 export default Map
