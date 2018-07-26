@@ -5,7 +5,6 @@
 }
 
 .container > * {
-    padding: 10px;
     flex: 1 100%;
 }
 
@@ -15,16 +14,17 @@
     font-weight: bold;
     color: white;
     text-align: center;
+    padding: 10px;
 }
 
 #map {
-    height: 400px;
-    width: auto;
+    height: 80vh;
+    width: 100vw;
     border-radius: 3px;
 }
 
 .filter-section {
-    max-width: 250px;
+    max-width: auto;
     background: #b3dde5;
     border: 1px solid #999;
     border-radius: 3px;
@@ -36,8 +36,7 @@
     width: auto;
     background: #ebf2fb;
     padding: 5px 10px;
-    margin-bottom:5px;
-    margin-top: 10px;
+    margin: 10px;
     border: none;
     border-bottom: 2px solid #ccc;
     outline: 0;
@@ -55,16 +54,18 @@
 }
 
 .footer {
-    background: lightgreen;
+    background: #5b6678;
+    color: white;
     text-align: right;
     border-radius: 3px;
     font-weight: bold;
     font-size: .8em;
+    padding: 10px;
 }
 
 @media all and (min-width: 600px) {
     .aside { flex: 1 auto; }
-    .filter-section { width: auto; }
+    .filter-section { max-width: 300px; }
 }
 
 @media all and (min-width: 800px) {
