@@ -3,17 +3,20 @@ import '../App.css'
 import Map from './Map'
 import ListPlaces from './ListPlaces'
 import scriptLoader from 'react-async-script-loader'
-import { MAP_API_KEY } from '../data/auth';
-import { places } from '../data/places';
+import { MAP_API_KEY } from '../data/auth'
+import { places } from '../data/places'
 
 let createdMap = {}
-let markers = [];
+let filterMarkers = []
 
 class App extends Component
 {
     state =
     {
-        googleMap: {}
+        googleMap: {},
+        places: places,
+        markers: [],
+        infoWindow: {}
     }
 
     // Load the Google MAP
@@ -25,39 +28,25 @@ class App extends Component
             zoom: 15
         });
 
-        let largeInfowindow = new window.google.maps.InfoWindow();
-
-        // Style the markers a bit. This will be our listing marker icon.
         let defaultIcon = makeMarkerIcon('0091ff');
-        // Create a "highlighted location" marker color for when the user
-        // mouses over the marker.
+        // Create a "highlighted location" marker color for when the user mouses over the marker.
         let highlightedIcon = makeMarkerIcon('ffff24');
 
-
-        // The following group uses the location array to create an array of markers on initialize.
+        // Create an array of markers
         for(let i = 0; i < places.length; i++)
         {
             // Get the position from the location array.
             let position = places[i].location;
             let name = places[i].name;
-            // Create a marker per location, and put into markers array.
-            const marker = new window.google.maps.Marker( {
+            const marker = new window.google.maps.Marker(
+            {
                 position: position,
                 name: name,
                 animation: window.google.maps.Animation.DROP,
                 id: i
             });
-            // Push the marker to our array of markers.
-            markers.push(marker);
-            
-            // Create an onclick event to open an infowindow at each marker.
-            marker.addListener('click', function()
-            {
-                populateInfoWindow(this, largeInfowindow);
-            });
+            filterMarkers.push(marker);
 
-            // Two event listeners - one for mouseover, one for mouseout,
-            // to change the colors back and forth.
             marker.addListener('mouseover', function()
             {
                 this.setIcon(highlightedIcon);
@@ -70,20 +59,27 @@ class App extends Component
             showPlaces();
         }
 
-        this.setState({ googleMap: createdMap })
+        this.setState({
+            googleMap: createdMap,
+            markers: filterMarkers,
+            infoWindow: new window.google.maps.InfoWindow()
+        })
     }
 
     render()
     {
+        const { markers, places, infoWindow } = this.state
+
         return (
             <div className="container" role='main'>
                 <header className="header">Alameda de Osuna Neighborhood</header>
 
                 <aside className="aside filter-section">
+
                     <ListPlaces
                         places={ places }
-                        markers={ markers }
                     />
+
                 </aside>
 
                 <Map />
@@ -95,69 +91,16 @@ class App extends Component
     }
 } // End CLASS
 
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
-function populateInfoWindow(marker, infowindow)
-{
-    // Check to make sure the infowindow is not already opened on this marker.
-    if(infowindow.marker !== marker)
-    {
-        // Clear the infowindow content to give the streetview time to load.
-         infowindow.setContent('');
-         infowindow.marker = marker;
-         // Make sure the marker property is cleared if the infowindow is closed.
-         infowindow.addListener('closeclick', function()
-         {
-             infowindow.marker = null;
-         });
-         let streetViewService = new window.google.maps.StreetViewService();
-         const radius = 50;
-         // In case the status is OK, which means the pano was found, compute the
-         // position of the streetview image, then calculate the heading, then get a
-         // panorama from that and set the options
-         function getStreetView(data, status)
-         {
-             if(status === window.google.maps.StreetViewStatus.OK)
-             {
-                 let nearStreetViewLocation = data.location.latLng;
-                 let heading = window.google.maps.geometry.spherical
-                    .computeHeading(nearStreetViewLocation, marker.position);
-                 infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-                 const panoramaOptions =
-                 {
-                     position: nearStreetViewLocation,
-                     pov: {
-                         heading: heading,
-                         pitch: 30
-                     }
-                 };
-              const panorama = new window.google.maps.StreetViewPanorama(
-                  document.getElementById('pano'), panoramaOptions);
-              }
-              else
-              {
-                  infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Street View Found</div>');
-              }
-          }
-          // Use streetview service to get the closest streetview image within
-          // 50 meters of the markers position
-          streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-          // Open the infowindow on the correct marker.
-          infowindow.open(createdMap, marker);
-    }
-}
 
 // This function will loop through the markers array and display them all.
 function showPlaces()
 {
     let bounds = new window.google.maps.LatLngBounds();
     // Extend the boundaries of the map for each marker and display the marker
-    for(let i = 0; i < markers.length; i++)
+    for(let i = 0; i < filterMarkers.length; i++)
     {
-        markers[i].setMap(createdMap);
-        bounds.extend(markers[i].position);
+        filterMarkers[i].setMap(createdMap);
+        bounds.extend(filterMarkers[i].position);
     }
     createdMap.fitBounds(bounds);
 }
@@ -165,9 +108,9 @@ function showPlaces()
 // This function will loop through the places and hide them all.
 function hidePlaces()
 {
-    for(let i = 0; i < markers.length; i++)
+    for(let i = 0; i < filterMarkers.length; i++)
     {
-        markers[i].setMap(null);
+        filterMarkers[i].setMap(null);
     }
 }
 
