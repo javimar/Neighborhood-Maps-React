@@ -14,6 +14,10 @@ class ListPlaces extends Component
         this.setState({ query: query })
     }
 
+    handleLocationClick = (location) => {
+        console.log(location)
+    }
+
     render()
     {
         const { places, markers } = this.props
@@ -22,17 +26,9 @@ class ListPlaces extends Component
         let showingPlaces
         if(query) // someone has typed in the input filter
         {
-            // escape special chars if any, and 'i' means case independant
+            // escape special chars if any, 'i' means case independant
             const match = new RegExp(escapeRegExp(query.trim()), 'i')
             showingPlaces = places.filter((place) => match.test(place.name))
-
-            /*
-            let marks = markers.filter((place) => match.test(place.name))
-            for (let x in marks)
-            {
-                marks[x].setMap(null);
-            }
-*/
         }
         else
         {
@@ -54,18 +50,13 @@ class ListPlaces extends Component
                 />
                 <ul>
                     {
-                        showingPlaces.map(function(place, index)
-                        {
-
-                            //if(place.name !== markers.name)
-                            //    markers[markers.indexOf("name")].setMap(null)
-
-                            return <li
+                        showingPlaces.map((place, index) =>
+                            <li 
                                 className="places-list-items"
+                                onClick={ (event) => this.handleLocationClick(place.name) } 
                                 key={ index }>{ place.name }
-                            </li>
-                        }
-                    )}
+                            </li>)
+                    }
                 </ul>
             </div>
 
