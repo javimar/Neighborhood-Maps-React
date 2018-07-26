@@ -48,11 +48,6 @@
     cursor: pointer;
 }
 
-#pano {
-    width: 200px;
-    height: 200px;
-}
-
 .footer {
     background: #5b6678;
     color: white;
@@ -65,11 +60,10 @@
 
 @media all and (min-width: 600px) {
     .aside { flex: 1 auto; }
-    .filter-section { max-width: 300px; }
 }
 
 @media all and (min-width: 800px) {
-    .filter-section { order: 1; }
+    .filter-section { order: 1; max-width: 300px; }
     #map    { order: 2; }
     #map    { flex: 3 0px; }
     .footer  { order: 4; }
