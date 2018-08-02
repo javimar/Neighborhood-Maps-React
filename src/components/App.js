@@ -91,7 +91,7 @@ class App extends Component
           
             marker.setIcon(makeMarkerIcon('d77ee7'))
             infowindow.marker = marker
-            infowindow.setContent(`<h3>${marker.title}</h3><h4>ha hecho clic</h4>`)
+            infowindow.setContent(`<h3>${marker.name}</h3><h4>ha hecho clic</h4>`)
             infowindow.open(this.map, marker)
 
             infowindow.addListener('closeclick', () =>
@@ -100,6 +100,15 @@ class App extends Component
             })
         }        
     }
+
+
+    handleLocationClick = (index) => 
+    {
+        const {markers, infoWindow } = this.state
+        const markerIndex = markers.findIndex(m => m.id === index)
+        this.fillInfoWindow(markers[markerIndex], infoWindow[markerIndex])
+    }
+
 
     render()
     {
@@ -113,6 +122,7 @@ class App extends Component
 
                     <ListPlaces
                         places={ places }
+                        onHandleLocationClick={ this.handleLocationClick }
                     />
 
                 </aside>

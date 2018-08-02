@@ -14,13 +14,10 @@ class ListPlaces extends Component
         this.setState({ query: query })
     }
 
-    handleLocationClick = (location) => {
-        console.log(location)
-    }
 
     render()
     {
-        const { places, markers } = this.props
+        const { places, markers, onHandleLocationClick } = this.props
         const { query } = this.state
 
         let showingPlaces
@@ -53,7 +50,7 @@ class ListPlaces extends Component
                         showingPlaces.map((place, index) =>
                             <li 
                                 className="places-list-items"
-                                onClick={ (event) => this.handleLocationClick(place.name) } 
+                                onClick={ (event) => onHandleLocationClick(index) } 
                                 key={ index }>{ place.name }
                             </li>)
                     }
