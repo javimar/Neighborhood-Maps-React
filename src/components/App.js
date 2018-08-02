@@ -8,6 +8,7 @@ import { places } from '../data/places'
 
 let createdMap = {}
 let filterMarkers = []
+let infoWindows = []
 
 class App extends Component
 {
@@ -16,7 +17,7 @@ class App extends Component
         googleMap: {},
         places: places,
         markers: [],
-        infoWindow: {}
+        infoWindow: []
     }
 
     // Load the Google MAP
@@ -29,7 +30,6 @@ class App extends Component
         });
 
         let defaultIcon = makeMarkerIcon('0091ff');
-        // Create a "highlighted location" marker color for when the user mouses over the marker.
         let highlightedIcon = makeMarkerIcon('ffff24');
 
         // Create an array of markers
@@ -45,7 +45,13 @@ class App extends Component
                 animation: window.google.maps.Animation.DROP,
                 id: i
             });
-            filterMarkers.push(marker);
+
+            const infowindow = new window.google.maps.InfoWindow()
+
+            marker.addListener('click', () =>
+            {
+                this.fillInfoWindow(marker, infowindow)
+            })
 
             marker.addListener('mouseover', function()
             {
@@ -57,13 +63,42 @@ class App extends Component
             });
 
             showPlaces();
+
+            filterMarkers.push(marker)
+            infoWindows.push(infowindow)
         }
 
         this.setState({
             googleMap: createdMap,
             markers: filterMarkers,
-            infoWindow: new window.google.maps.InfoWindow()
+            infoWindow: infoWindows
         })
+    }
+
+    fillInfoWindow = (marker, infowindow) =>
+    {
+        // ES6 destructuring
+        const { markers } = this.state
+
+        // Check for infowindow open
+        if (infowindow.marker !== marker) 
+        {
+            if (infowindow.marker) 
+            {
+                const ind = markers.findIndex(m => m.title === infowindow.marker.title)
+                markers[ind].setIcon(makeMarkerIcon('ffffff'))
+            }
+          
+            marker.setIcon(makeMarkerIcon('d77ee7'))
+            infowindow.marker = marker
+            infowindow.setContent(`<h3>${marker.title}</h3><h4>ha hecho clic</h4>`)
+            infowindow.open(this.map, marker)
+
+            infowindow.addListener('closeclick', () =>
+            {
+                infowindow.marker = null
+            })
+        }        
     }
 
     render()
@@ -115,9 +150,7 @@ function hidePlaces()
 }
 
 
-// This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
+// Take a color and creates a new marker icon of that colorº
 function makeMarkerIcon(markerColor)
 {
     let markerImage = new window.google.maps.MarkerImage(
