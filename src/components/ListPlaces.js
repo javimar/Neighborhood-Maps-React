@@ -12,6 +12,7 @@ class ListPlaces extends Component
     updateQuery = (query) =>
     {
         this.setState({ query: query })
+        this.props.onHandleMarkerDisplay(query.trim())
     }
 
 

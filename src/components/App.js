@@ -78,7 +78,7 @@ class App extends Component
     fillInfoWindow = (marker, infowindow) =>
     {
         // ES6 destructuring
-        const { markers } = this.state
+        const { markers, googleMap } = this.state
 
         // Check for infowindow open
         if (infowindow.marker !== marker) 
@@ -91,8 +91,8 @@ class App extends Component
           
             marker.setIcon(makeMarkerIcon('d77ee7'))
             infowindow.marker = marker
-            infowindow.setContent(`<h3>${marker.name}</h3><h4>ha hecho clic</h4>`)
-            infowindow.open(this.map, marker)
+            infowindow.setContent(`<h3>${marker.name}</h3><h4>clicked!</h4>`)
+            infowindow.open(googleMap, marker)
 
             infowindow.addListener('closeclick', () =>
             {
@@ -110,9 +110,42 @@ class App extends Component
     }
 
 
+    handleMarkerDisplay = (query) => 
+    {
+        const { places, markers, infoWindow } = this.state
+        
+        if(query) 
+        {
+            places.forEach((currentlocation, i) => 
+            {
+                if (currentlocation.name.toLowerCase().includes(query.toLowerCase())) 
+                {
+                    markers[i].setVisible(true)
+                } 
+                else 
+                {
+                    if (infoWindow.marker === markers[i]) 
+                    {
+                        infoWindow.close()
+                    }
+                    markers[i].setVisible(false)
+                }
+            })
+        } 
+        else 
+        {
+            places.forEach((currentlocation, i) => 
+            {
+                markers[i].setVisible(true)
+            })
+        }        
+
+    }
+
+
     render()
     {
-        const { markers, places, infoWindow } = this.state
+        const { places } = this.state
 
         return (
             <div className="container" role='main'>
@@ -123,6 +156,7 @@ class App extends Component
                     <ListPlaces
                         places={ places }
                         onHandleLocationClick={ this.handleLocationClick }
+                        onHandleMarkerDisplay={ this.handleMarkerDisplay }
                     />
 
                 </aside>
@@ -148,15 +182,6 @@ function showPlaces()
         bounds.extend(filterMarkers[i].position);
     }
     createdMap.fitBounds(bounds);
-}
-
-// This function will loop through the places and hide them all.
-function hidePlaces()
-{
-    for(let i = 0; i < filterMarkers.length; i++)
-    {
-        filterMarkers[i].setMap(null);
-    }
 }
 
 
