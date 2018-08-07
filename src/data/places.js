@@ -63,5 +63,21 @@ export const places =
     		lat: 40.455242, lng: -3.587512 
 	    },
 	    venues:[]
+    },
+    {
+        name: 'NH Barajas Airport', 
+        location: 
+        { 
+            lat: 40.450918, lng: -3.595054 
+        },
+        venues:[]
+    },
+    {
+        name: 'Santa Catalina de Alejandría Church', 
+        location: 
+        { 
+            lat: 40.457969, lng: -3.595504 
+        },
+        venues:[]
     }
 ]

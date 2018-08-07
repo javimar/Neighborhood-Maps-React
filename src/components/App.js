@@ -46,7 +46,9 @@ class App extends Component
                 id: i
             });
 
-            const infowindow = new window.google.maps.InfoWindow()
+            const infowindow = new window.google.maps.InfoWindow({
+                maxWidth: 250
+            })
 
             marker.addListener('click', () =>
             {
@@ -104,12 +106,12 @@ class App extends Component
                 address = places[index].venues[j].location.address
                 if(address === undefined)
                 {
-                    address = 'Not specified'
+                    address = 'Not listed'
                 }
                 content = content + 
-                        (`<p>${places[index].venues[j].name}. `) +
-                        (`Address: ${address}. `) +
-                        (`Distance: ${places[index].venues[j].location.distance}m</p>`) 
+                        (`<p class="infow">${places[index].venues[j].name}.<br>`) +
+                        (`Address: ${address}.<br>`) +
+                        (`<span class="distance">Distance: ${places[index].venues[j].location.distance}m</span></p>`) 
             }
             infowindow.setContent(content)
             infowindow.open(googleMap, marker)
@@ -165,12 +167,12 @@ class App extends Component
     fetchData = () => // Get data from the FOURSQUARE API
     {
         const { places } = this.state
-        places.map((place) => // fill the venues of all my locations
+        places.map((place) => // fill the venues of all my places
 
             fetch(`https://api.foursquare.com/v2/venues/search?` +
                 `ll=${place.location.lat},${place.location.lng}` +
                 `&intent=browse` +
-                `&radius=500` +
+                `&radius=700` +
                 `&query=restaurant` +
                 `&client_id=${AUTH.FSQ_CLI_ID}` +
                 `&client_secret=${AUTH.FSQ_CLI_SEC}` +
@@ -185,7 +187,6 @@ class App extends Component
                   }
                 }).catch(error => 
                 {
-                  //checkGetData = false;
                   console.log(error);
                 }) 
         );
@@ -212,7 +213,11 @@ class App extends Component
 
                 <Map />
 
-                <footer className="footer">JaviMar 2018</footer>
+                <footer className="footer">
+                    <div>JaviMar 2018</div>
+                    Restaurant data provided by <a target="_blank" href="https://developer.foursquare.com/">
+                    Foursquare</a>
+                </footer>
 
             </div>
             )
@@ -220,7 +225,7 @@ class App extends Component
 } // End CLASS
 
 
-// This function will loop through the markers array and display them all.
+// Loop through the markers array and display them
 function showPlaces()
 {
     let bounds = new window.google.maps.LatLngBounds();
@@ -234,7 +239,7 @@ function showPlaces()
 }
 
 
-// Take a color and creates a new marker icon of that colorº
+// Take a color and creates a new marker icon of that color
 function makeMarkerIcon(markerColor)
 {
     let markerImage = new window.google.maps.MarkerImage(
