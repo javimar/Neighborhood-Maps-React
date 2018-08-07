@@ -3,7 +3,7 @@ import '../App.css'
 import Map from './Map'
 import ListPlaces from './ListPlaces'
 import scriptLoader from 'react-async-script-loader'
-import { MAP_API_KEY } from '../data/auth'
+import * as AUTH from '../data/auth'
 import { places } from '../data/places'
 
 let createdMap = {}
@@ -73,12 +73,15 @@ class App extends Component
             markers: filterMarkers,
             infoWindow: infoWindows
         })
+
+        // Go and grab some restaurants from the API Foursquare
+        this.fetchData();
     }
 
     fillInfoWindow = (marker, infowindow) =>
     {
         // ES6 destructuring
-        const { markers, googleMap } = this.state
+        const { places, markers, googleMap } = this.state
 
         // Check for infowindow open
         if (infowindow.marker !== marker) 
@@ -91,7 +94,24 @@ class App extends Component
           
             marker.setIcon(makeMarkerIcon('d77ee7'))
             infowindow.marker = marker
-            infowindow.setContent(`<h3>${marker.name}</h3><h4>clicked!</h4>`)
+
+            let content =`<h3>${marker.name}</h3><h4>Restaurants around:</h4>`
+            let index = marker.id
+            let address
+
+            for(let j = 0; j < places[index].venues.length; j++)
+            {
+                address = places[index].venues[j].location.address
+                if(address === undefined)
+                {
+                    address = 'Not specified'
+                }
+                content = content + 
+                        (`<p>${places[index].venues[j].name}. `) +
+                        (`Address: ${address}. `) +
+                        (`Distance: ${places[index].venues[j].location.distance}m</p>`) 
+            }
+            infowindow.setContent(content)
             infowindow.open(googleMap, marker)
 
             infowindow.addListener('closeclick', () =>
@@ -139,7 +159,36 @@ class App extends Component
                 markers[i].setVisible(true)
             })
         }        
+    }
 
+
+    fetchData = () => // Get data from the FOURSQUARE API
+    {
+        const { places } = this.state
+        places.map((place) => // fill the venues of all my locations
+
+            fetch(`https://api.foursquare.com/v2/venues/search?` +
+                `ll=${place.location.lat},${place.location.lng}` +
+                `&intent=browse` +
+                `&radius=500` +
+                `&query=restaurant` +
+                `&client_id=${AUTH.FSQ_CLI_ID}` +
+                `&client_secret=${AUTH.FSQ_CLI_SEC}` +
+                `&v=20180323`
+                )
+                .then(response => response.json())
+                .then(data => 
+                {
+                  if (data.meta.code === 200) // request successful
+                  {
+                    place.venues = data.response.venues;
+                  }
+                }).catch(error => 
+                {
+                  //checkGetData = false;
+                  console.log(error);
+                }) 
+        );
     }
 
 
@@ -200,5 +249,5 @@ function makeMarkerIcon(markerColor)
 
 // Load Google Maps asynchronously using React Script Loader
 export default scriptLoader(
-  [`https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}`]
+  [`https://maps.googleapis.com/maps/api/js?key=${AUTH.MAP_API_KEY}`]
 )(App);
