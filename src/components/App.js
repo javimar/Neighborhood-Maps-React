@@ -77,7 +77,7 @@ class App extends Component
         })
 
         // Go and grab some restaurants from the API Foursquare
-        this.fetchData();
+        this.getNearbyRestaurants();
     }
 
     fillInfoWindow = (marker, infowindow) =>
@@ -103,6 +103,15 @@ class App extends Component
 
             for(let j = 0; j < places[index].venues.length; j++)
             {
+                // get the Foursquare URL of the place, if not found, use Google search
+                let url = this.getRestaurantUrl(places[index].venues[j].id)
+                if(url === "none")
+                {
+                    url = `http://www.google.es/search?q=` +
+                        `${places[index].venues[j].name}` +
+                        `+alameda de osuna`
+                }
+
                 address = places[index].venues[j].location.address
                 if(address === undefined)
                 {
@@ -111,7 +120,13 @@ class App extends Component
                 content = content + 
                         (`<p class="infow">${places[index].venues[j].name}.<br>`) +
                         (`Address: ${address}.<br>`) +
-                        (`<span class="distance">Distance: ${places[index].venues[j].location.distance}m</span></p>`) 
+                        (
+                            `<span class="distance">Distance: ` +
+                            `${places[index].venues[j].location.distance}m</span>` + 
+                            `<span class="more-info"><a href="` + 
+                            `${url}"` +
+                            ` target="_blank">    more</a></span></p>`
+                        ) 
             }
             infowindow.setContent(content)
             infowindow.open(googleMap, marker)
@@ -164,7 +179,7 @@ class App extends Component
     }
 
 
-    fetchData = () => // Get data from the FOURSQUARE API
+    getNearbyRestaurants = () => // Get data from the FOURSQUARE API
     {
         const { places } = this.state
         places.map((place) => // fill the venues of all my places
@@ -192,6 +207,34 @@ class App extends Component
         );
     }
 
+    getRestaurantUrl = (venueId) =>
+    {
+        let url = "none"
+
+        fetch(`https://api.foursquare.com/v2/venues/` +
+            `${venueId}` +
+            `?client_id=${AUTH.FSQ_CLI_ID}` +
+            `&client_secret=${AUTH.FSQ_CLI_SEC}` +
+            `&v=20180323`
+            )
+            .then(response => response.json())
+            .then(data => 
+            {
+              if (data.meta.code === 200) // request successful
+              {
+                url = data.response.venue.canonicalUrl;
+              }
+              else if(data.meta.code === 429) // quota exceeded (only 50 per day are allowed)
+              {
+                console.log("Daily quota for Foursquare exceeded");
+              }
+            }).catch(error => 
+            {
+              console.log(error);
+            })
+
+        return url
+    }
 
     render()
     {
@@ -215,7 +258,8 @@ class App extends Component
 
                 <footer className="footer">
                     <div>JaviMar 2018</div>
-                    Restaurant data provided by <a target="_blank" href="https://developer.foursquare.com/">
+                    Restaurant data provided by <a target="_blank" 
+                    rel="noopener noreferrer" href="https://developer.foursquare.com/">
                     Foursquare</a>
                 </footer>
 

@@ -89,6 +89,18 @@ h4 {
     color: #bb5179;
 }
 
+.more-info a {
+    font-size: .8em;
+    font-weight: bold;
+    color: #48b5e9;
+    text-decoration: none;
+}
+
+.more-info a:hover {
+    color: #ff0000;
+}
+
+
 @media all and (min-width: 600px) {
     .aside { flex: 1 auto; }
 }
