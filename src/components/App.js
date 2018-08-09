@@ -118,7 +118,7 @@ class App extends Component
                     address = 'Not listed'
                 }
                 content = content + 
-                        (`<p class="infow">${places[index].venues[j].name}.<br>`) +
+                        (`<p class="infow">${places[index].venues[j].name.toUpperCase()}.<br>`) +
                         (`Address: ${address}.<br>`) +
                         (
                             `<span class="distance">Distance: ` +
