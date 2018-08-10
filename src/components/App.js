@@ -77,7 +77,7 @@ class App extends Component
         })
 
         // Go and grab some restaurants from the API Foursquare
-        this.getNearbyRestaurants();
+        this.getNearbyRestaurants()
     }
 
     fillInfoWindow = (marker, infowindow) =>
@@ -103,14 +103,13 @@ class App extends Component
 
             for(let j = 0; j < places[index].venues.length; j++)
             {
-                // get the Foursquare URL of the place, if not found, use Google search
-                let url = this.getRestaurantUrl(places[index].venues[j].id)
-                if(url === "none")
-                {
-                    url = `http://www.google.es/search?q=` +
-                        `${places[index].venues[j].name}` +
-                        `+alameda de osuna`
-                }
+                /* Since Foursquare has a very strict quota of only 50 calls per day, 
+                   we use a simple Google search instead of looking for the venueId in another
+                   API call to FS
+                */
+                let url = `http://www.google.es/search?q=` +
+                    `${places[index].venues[j].name}` + 
+                    `+alameda de osuna`
 
                 address = places[index].venues[j].location.address
                 if(address === undefined)
@@ -161,9 +160,9 @@ class App extends Component
                 } 
                 else 
                 {
-                    if (infoWindow.marker === markers[i]) 
+                    if (infoWindow[i].marker === markers[i]) 
                     {
-                        infoWindow.close()
+                        //infoWindow[i].close()
                     }
                     markers[i].setVisible(false)
                 }
@@ -207,34 +206,6 @@ class App extends Component
         );
     }
 
-    getRestaurantUrl = (venueId) =>
-    {
-        let url = "none"
-
-        fetch(`https://api.foursquare.com/v2/venues/` +
-            `${venueId}` +
-            `?client_id=${AUTH.FSQ_CLI_ID}` +
-            `&client_secret=${AUTH.FSQ_CLI_SEC}` +
-            `&v=20180323`
-            )
-            .then(response => response.json())
-            .then(data => 
-            {
-              if (data.meta.code === 200) // request successful
-              {
-                url = data.response.venue.canonicalUrl;
-              }
-              else if(data.meta.code === 429) // quota exceeded (only 50 per day are allowed)
-              {
-                console.log("Daily quota for Foursquare exceeded");
-              }
-            }).catch(error => 
-            {
-              console.log(error);
-            })
-
-        return url
-    }
 
     render()
     {
